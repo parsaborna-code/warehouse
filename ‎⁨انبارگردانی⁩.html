@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>انبارگردانی</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #21262d;
+    --border: #30363d;
+    --accent: #f0883e;
+    --accent2: #58a6ff;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --green: #3fb950;
+    --red: #f85149;
+    --yellow: #d29922;
+    --blue: #58a6ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    direction: rtl;
+  }
+
+  /* HEADER */
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--accent), #e05a0a);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text { font-size: 18px; font-weight: 700; }
+  .logo-sub { font-size: 12px; color: var(--text-muted); }
+
+  .stats-bar {
+    display: flex;
+    gap: 24px;
+  }
+
+  .stat {
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .stat-num.green { color: var(--green); }
+  .stat-num.red { color: var(--red); }
+  .stat-num.yellow { color: var(--yellow); }
+  .stat-num.blue { color: var(--blue); }
+
+  /* CONTROLS */
+  .controls {
+    padding: 20px 32px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-box:focus { border-color: var(--accent2); }
+
+  .filter-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    color: var(--text-muted);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover, .filter-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240,136,62,0.08);
+  }
+
+  /* TABLE */
+  .table-wrapper {
+    padding: 0 32px 32px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+
+  thead tr {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+  }
+
+  th {
+    padding: 12px 14px;
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.2s;
+  }
+
+  th:hover { color: var(--text); }
+
+  td {
+    padding: 13px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  tbody tr {
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+
+  tbody tr:hover {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .row-num {
+    color: var(--text-muted);
+    font-size: 12px;
+    width: 36px;
+  }
+
+  .product-name {
+    font-weight: 500;
+    max-width: 240px;
+  }
+
+  .product-name span {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .brand-badge {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .country {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .qty {
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .status-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .badge-green { background: rgba(63,185,80,0.12); color: var(--green); }
+  .badge-green::before { background: var(--green); }
+
+  .badge-red { background: rgba(248,81,73,0.12); color: var(--red); }
+  .badge-red::before { background: var(--red); }
+
+  .badge-yellow { background: rgba(210,153,34,0.12); color: var(--yellow); }
+  .badge-yellow::before { background: var(--yellow); }
+
+  .action-btns {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .btn-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-icon:hover {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(88,166,255,0.08);
+  }
+
+  .btn-icon.has-img {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240,136,62,0.08);
+  }
+
+  .btn-icon.has-link {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(88,166,255,0.08);
+  }
+
+  .notes {
+    font-size: 12px;
+    color: var(--text-muted);
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+  }
+
+  .modal-overlay.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: translateY(20px) scale(0.97);
+    transition: transform 0.25s;
+  }
+
+  .modal-overlay.open .modal {
+    transform: translateY(0) scale(1);
+  }
+
+  .modal-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .modal-subtitle {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .modal-close {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .modal-body {
+    padding: 20px 24px;
+  }
+
+  .modal-section {
+    margin-bottom: 20px;
+  }
+
+  .modal-section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .info-item { }
+  .info-item label {
+    display: block;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 3px;
+  }
+  .info-item value {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* IMAGE SECTION */
+  .images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+
+  .img-slot {
+    aspect-ratio: 4/3;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    background: var(--surface2);
+  }
+
+  .img-slot:hover {
+    border-color: var(--accent);
+    background: rgba(240,136,62,0.05);
+  }
+
+  .img-slot.has-img {
+    border-style: solid;
+    border-color: var(--border);
+  }
+
+  .img-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .img-slot .add-icon {
+    font-size: 24px;
+    color: var(--border);
+    margin-bottom: 6px;
+    transition: color 0.2s;
+  }
+
+  .img-slot:hover .add-icon { color: var(--accent); }
+
+  .img-slot .add-text {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .img-del {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 12px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+  }
+
+  .img-slot.has-img:hover .img-del { display: flex; }
+
+  /* LINK SECTION */
+  .link-input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .link-input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .link-input:focus { border-color: var(--accent2); }
+  .link-input::placeholder { color: var(--text-muted); text-align: right; direction: rtl; }
+
+  .btn-save {
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 9px 18px;
+    color: #fff;
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+
+  .btn-save:hover { background: #e07030; }
+
+  .saved-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: rgba(88,166,255,0.08);
+    border: 1px solid rgba(88,166,255,0.2);
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+
+  .saved-link a {
+    color: var(--accent2);
+    font-size: 13px;
+    text-decoration: none;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: ltr;
+  }
+
+  .saved-link a:hover { text-decoration: underline; }
+
+  .link-del {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .link-del:hover { color: var(--red); }
+
+  /* NOTES */
+  .notes-textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-family: 'Vazirmatn', sans-serif;
+    font-size: 13px;
+    outline: none;
+    resize: vertical;
+    min-height: 60px;
+    transition: border-color 0.2s;
+  }
+
+  .notes-textarea:focus { border-color: var(--accent2); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+  }
+
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* PRINT */
+  @media print {
+    .controls, .action-btns, header { display: none !important; }
+    body { background: #fff; color: #000; }
+    table { font-size: 11px; }
+  }
+
+  /* LIGHTBOX */
+  .lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .lightbox.open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .lightbox img {
+    max-width: 90vw;
+    max-height: 90vh;
+    object-fit: contain;
+    border-radius: 8px;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">📦</div>
+    <div>
+      <div class="logo-text">انبارگردانی</div>
+      <div class="logo-sub">سیستم مدیریت موجودی انبار</div>
+    </div>
+  </div>
+  <div class="stats-bar" id="statsBar"></div>
+</header>
+
+<div class="controls">
+  <input class="search-box" type="text" placeholder="🔍  جستجو در محصولات، برند، توضیحات..." id="searchInput" oninput="filterTable()">
+  <button class="filter-btn active" onclick="setFilter('all', this)">همه</button>
+  <button class="filter-btn" onclick="setFilter('سالم', this)">✅ سالم</button>
+  <button class="filter-btn" onclick="setFilter('معیوب', this)">❌ معیوب</button>
+  <button class="filter-btn" onclick="setFilter('نیاز به بررسی', this)">⚠️ نیاز به بررسی</button>
+  <button class="filter-btn" onclick="exportData()" style="margin-right:auto">💾 ذخیره داده‌ها</button>
+  <button class="filter-btn" onclick="loadData()">📂 بارگذاری</button>
+</div>
+
+<div class="table-wrapper">
+  <table id="mainTable">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th onclick="sortTable('name')">نام محصول ↕</th>
+        <th onclick="sortTable('brand')">برند</th>
+        <th onclick="sortTable('country')">کشور</th>
+        <th>موجودی</th>
+        <th onclick="sortTable('status')">وضعیت</th>
+        <th>توضیحات</th>
+        <th>عکس / لینک</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+  <div class="empty-state" id="emptyState" style="display:none">
+    <div class="icon">🔍</div>
+    <div>نتیجه‌ای یافت نشد</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnBg(event)">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-subtitle" id="modalSubtitle"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="">
+</div>
+
+<input type="file" id="fileInput" accept="image/*" style="display:none" multiple onchange="handleFileSelect(event)">
+
+<script>
+const RAW_DATA = [
+  { id:1, name:"استاکر برقی", brand:"Aria", country:"Iran", partNum:"-", unit:"دستگاه", qty:4, status:"معیوب", notes:"" },
+  { id:2, name:"کار‌واش", brand:"Arian savato", country:"Iran", partNum:"-", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:3, name:"سیم پیچ", brand:"-", country:"-", partNum:"-", unit:"عدد", qty:1, status:"معیوب", notes:"" },
+  { id:4, name:"شارژر صنعتی باتری لیفتراک", brand:"bt rolatruc", country:"Sweden", partNum:"-", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:5, name:"UPS", brand:"Powerware", country:"USA", partNum:"-", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:6, name:"کپسول هوا", brand:"-", country:"-", partNum:"-", unit:"عدد", qty:3, status:"سالم", notes:"" },
+  { id:7, name:"Process Pump Skid", brand:"EBARA", country:"Italy", partNum:"-", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"همراه اوله‌ها مخازن و اتصالات و پمپ‌های مجزا برای هر بخش" },
+  { id:8, name:"موتور پمپ vp3455d", brand:"BALDOR", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:9, name:"Groth Pressure / Vacuum Relief Valve", brand:"Groth Equipment Cor", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:10, name:"جک پالت", brand:"-", country:"-", partNum:"", unit:"عدد", qty:1, status:"معیوب", notes:"" },
+  { id:11, name:"لیبل زن (STÖBER)", brand:"STÖBER", country:"Germany", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:12, name:"ROBERTS PACK", brand:"Roberts", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:13, name:"جارو برقی / وکیوم صنعتی", brand:"BALDOR", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"سالم", notes:"اکبند" },
+  { id:14, name:"لیبل زن (Verity)", brand:"Verity systems", country:"UK", partNum:"", unit:"دستگاه", qty:2, status:"سالم", notes:"یکی توی جعبه، یکی استفاده‌شده" },
+  { id:15, name:"VHP Generator / AMSCO VHP Series 1000", brand:"AMSCO", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"سالم", notes:"" },
+  { id:16, name:"خنک‌کننده Nenninger", brand:"AUTOTHERM", country:"Germany", partNum:"", unit:"دستگاه", qty:1, status:"سالم", notes:"" },
+  { id:17, name:"وکیوم صنعتی", brand:"Kingstar", country:"China", partNum:"", unit:"دستگاه", qty:1, status:"معیوب", notes:"" },
+  { id:18, name:"لباس‌شویی صنعتی", brand:"J.A.M nazarian", country:"Iran", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:19, name:"اتوکلاو", brand:"ایران طب زعیم", country:"Iran", partNum:"", unit:"دستگاه", qty:1, status:"سالم", notes:"" },
+  { id:20, name:"ترانسفورماتور قدرت صنعتی سه‌فاز", brand:"General signal", country:"USA", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"" },
+  { id:21, name:"کمپرسور کولر دو فن", brand:"Aermec", country:"Italy", partNum:"", unit:"دستگاه", qty:1, status:"نیاز به بررسی", notes:"فقط کمپرسور موجوده" },
+  { id:22, name:"سیستم پرکن چندنازله دارویی", brand:"Ebm techniek", country:"Netherlands", partNum:"", unit:"دستگاه", qty:2, status:"معیوب", notes:"تمام تجهیزات و تابلوهای فرمان موجود هست" },
+  { id:23, name:"نوار نقاله", brand:"Relex", country:"Switzerland", partNum:"", unit:"دستگاه", qty:2, status:"معیوب", notes:"موتور گیربکس‌هاشون در سالم" },
+  { id:24, name:"مخزن تحت فشار استیل", brand:"-", country:"-", partNum:"", unit:"عدد", qty:1, status:"نیاز به بررسی", notes:"" },
+];
+
+// Persistent extras per product (images, link, notes)
+let extras = {};
+
+// Load saved extras from localStorage
+try {
+  const saved = localStorage.getItem('warehouse_extras');
+  if (saved) extras = JSON.parse(saved);
+} catch(e) {}
+
+function saveExtras() {
+  try { localStorage.setItem('warehouse_extras', JSON.stringify(extras)); } catch(e) {}
+}
+
+function getExtra(id) {
+  if (!extras[id]) extras[id] = { images: [], link: '', notes: '' };
+  return extras[id];
+}
+
+let currentFilter = 'all';
+let currentSort = null;
+let sortAsc = true;
+let currentEditId = null;
+let currentImgSlot = null;
+
+function statusClass(s) {
+  if (s === 'سالم') return 'badge-green';
+  if (s === 'معیوب') return 'badge-red';
+  return 'badge-yellow';
+}
+
+function renderStats() {
+  const total = RAW_DATA.length;
+  const salm = RAW_DATA.filter(r => r.status === 'سالم').length;
+  const maib = RAW_DATA.filter(r => r.status === 'معیوب').length;
+  const check = RAW_DATA.filter(r => r.status === 'نیاز به بررسی').length;
+  document.getElementById('statsBar').innerHTML = `
+    <div class="stat"><div class="stat-num blue">${total}</div><div class="stat-label">کل اقلام</div></div>
+    <div class="stat"><div class="stat-num green">${salm}</div><div class="stat-label">سالم</div></div>
+    <div class="stat"><div class="stat-num red">${maib}</div><div class="stat-label">معیوب</div></div>
+    <div class="stat"><div class="stat-num yellow">${check}</div><div class="stat-label">نیاز به بررسی</div></div>
+  `;
+}
+
+function getFilteredData() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  let data = RAW_DATA.filter(r => {
+    const matchFilter = currentFilter === 'all' || r.status === currentFilter;
+    const matchSearch = !q || r.name.toLowerCase().includes(q) || r.brand.toLowerCase().includes(q) ||
+      r.country.toLowerCase().includes(q) || getExtra(r.id).notes.toLowerCase().includes(q) ||
+      r.notes.toLowerCase().includes(q);
+    return matchFilter && matchSearch;
+  });
+  if (currentSort) {
+    data = [...data].sort((a, b) => {
+      let va = a[currentSort] || '', vb = b[currentSort] || '';
+      return sortAsc ? va.localeCompare(vb, 'fa') : vb.localeCompare(va, 'fa');
+    });
+  }
+  return data;
+}
+
+function renderTable() {
+  const data = getFilteredData();
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+
+  if (data.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = data.map((r, i) => {
+    const ex = getExtra(r.id);
+    const hasImg = ex.images.length > 0;
+    const hasLink = !!ex.link;
+    const notes = ex.notes || r.notes;
+    return `
+    <tr onclick="openModal(${r.id})">
+      <td class="row-num">${i + 1}</td>
+      <td class="product-name">${r.name}${r.partNum && r.partNum !== '-' ? `<span>Part: ${r.partNum}</span>` : ''}</td>
+      <td><span class="brand-badge">${r.brand}</span></td>
+      <td class="country">${r.country}</td>
+      <td class="qty">${r.qty}</td>
+      <td><span class="status-badge ${statusClass(r.status)}">${r.status}</span></td>
+      <td><div class="notes" title="${notes}">${notes || '—'}</div></td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <div class="btn-icon ${hasImg ? 'has-img' : ''}" title="عکس‌ها${hasImg ? ' (' + ex.images.length + ')' : ''}" onclick="openModal(${r.id}, 'images')">
+            🖼️${hasImg ? `<sup style="font-size:9px;margin-right:1px">${ex.images.length}</sup>` : ''}
+          </div>
+          ${hasLink
+            ? `<a class="btn-icon has-link" href="${ex.link}" target="_blank" title="باز کردن لینک">🔗</a>`
+            : `<div class="btn-icon" title="افزودن لینک" onclick="openModal(${r.id}, 'link')">🔗</div>`}
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function filterTable() { renderTable(); }
+
+function sortTable(col) {
+  if (currentSort === col) sortAsc = !sortAsc;
+  else { currentSort = col; sortAsc = true; }
+  renderTable();
+}
+
+// --- MODAL ---
+function openModal(id, section) {
+  const r = RAW_DATA.find(x => x.id === id);
+  if (!r) return;
+  currentEditId = id;
+  const ex = getExtra(id);
+
+  document.getElementById('modalTitle').textContent = r.name;
+  document.getElementById('modalSubtitle').textContent = `${r.brand} · ${r.country} · وضعیت: ${r.status}`;
+
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-section">
+      <div class="modal-section-title">اطلاعات پایه</div>
+      <div class="info-grid">
+        <div class="info-item"><label>برند / سازنده</label><value>${r.brand}</value></div>
+        <div class="info-item"><label>کشور سازنده</label><value>${r.country}</value></div>
+        <div class="info-item"><label>واحد</label><value>${r.unit}</value></div>
+        <div class="info-item"><label>موجودی</label><value>${r.qty}</value></div>
+        <div class="info-item"><label>وضعیت</label><value><span class="status-badge ${statusClass(r.status)}">${r.status}</span></value></div>
+        ${r.partNum && r.partNum !== '-' && r.partNum ? `<div class="info-item"><label>Part Number</label><value>${r.partNum}</value></div>` : ''}
+      </div>
+    </div>
+
+    <div class="modal-section" id="imagesSection">
+      <div class="modal-section-title">📷 عکس‌های محصول <span style="color:var(--text-muted);font-weight:400">(کلیک کنید برای افزودن)</span></div>
+      <div class="images-grid" id="imagesGrid"></div>
+    </div>
+
+    <div class="modal-section" id="linkSection">
+      <div class="modal-section-title">🔗 لینک قیمت / سایت</div>
+      <div class="link-input-row">
+        <input class="link-input" type="url" id="linkInput" placeholder="https://..." value="${ex.link || ''}" oninput="autoSaveLink()">
+        <button class="btn-save" onclick="saveLink()">ذخیره</button>
+      </div>
+      ${ex.link ? `<div class="saved-link"><a href="${ex.link}" target="_blank">${ex.link}</a><button class="link-del" onclick="deleteLink()">✕</button></div>` : ''}
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">📝 توضیحات اضافه</div>
+      <textarea class="notes-textarea" id="notesInput" oninput="autoSaveNotes()" placeholder="هر توضیحی درباره این کالا...">${ex.notes || r.notes || ''}</textarea>
+    </div>
+  `;
+
+  renderImagesGrid();
+  document.getElementById('modalOverlay').classList.add('open');
+
+  if (section === 'link') {
+    setTimeout(() => document.getElementById('linkInput')?.focus(), 300);
+  }
+}
+
+function renderImagesGrid() {
+  const ex = getExtra(currentEditId);
+  const grid = document.getElementById('imagesGrid');
+  if (!grid) return;
+
+  // Show existing images + add slots (max 6)
+  const maxSlots = Math.max(3, ex.images.length + 1);
+  let html = '';
+
+  ex.images.forEach((src, i) => {
+    html += `<div class="img-slot has-img" onclick="openLightbox('${src}')">
+      <img src="${src}" alt="عکس ${i+1}">
+      <button class="img-del" onclick="deleteImg(event, ${i})">✕</button>
+    </div>`;
+  });
+
+  // Add slot
+  html += `<div class="img-slot" onclick="triggerFileInput()">
+    <div class="add-icon">+</div>
+    <div class="add-text">افزودن عکس</div>
+  </div>`;
+
+  grid.innerHTML = html;
+}
+
+function triggerFileInput() {
+  document.getElementById('fileInput').click();
+}
+
+function handleFileSelect(e) {
+  const files = Array.from(e.target.files);
+  const ex = getExtra(currentEditId);
+  let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      ex.images.push(ev.target.result);
+      loaded++;
+      if (loaded === files.length) {
+        saveExtras();
+        renderImagesGrid();
+        renderTable();
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  e.target.value = '';
+}
+
+function deleteImg(e, idx) {
+  e.stopPropagation();
+  const ex = getExtra(currentEditId);
+  ex.images.splice(idx, 1);
+  saveExtras();
+  renderImagesGrid();
+  renderTable();
+}
+
+function saveLink() {
+  const val = document.getElementById('linkInput')?.value?.trim();
+  if (!val) return;
+  getExtra(currentEditId).link = val;
+  saveExtras();
+  // Refresh link section
+  const linkSec = document.getElementById('linkSection');
+  const existingRow = linkSec.querySelector('.saved-link');
+  if (existingRow) existingRow.remove();
+  const row = document.createElement('div');
+  row.className = 'saved-link';
+  row.innerHTML = `<a href="${val}" target="_blank">${val}</a><button class="link-del" onclick="deleteLink()">✕</button>`;
+  linkSec.appendChild(row);
+  renderTable();
+}
+
+function autoSaveLink() {
+  const val = document.getElementById('linkInput')?.value?.trim();
+  getExtra(currentEditId).link = val || '';
+  saveExtras();
+}
+
+function deleteLink() {
+  getExtra(currentEditId).link = '';
+  saveExtras();
+  document.getElementById('linkInput').value = '';
+  const row = document.querySelector('.saved-link');
+  if (row) row.remove();
+  renderTable();
+}
+
+function autoSaveNotes() {
+  const val = document.getElementById('notesInput')?.value || '';
+  getExtra(currentEditId).notes = val;
+  saveExtras();
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  renderTable();
+}
+
+function closeModalOnBg(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// LIGHTBOX
+function openLightbox(src) {
+  document.getElementById('lightboxImg').src = src;
+  document.getElementById('lightbox').classList.add('open');
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+// EXPORT / IMPORT
+function exportData() {
+  const blob = new Blob([JSON.stringify(extras, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'warehouse_extras.json';
+  a.click();
+}
+
+function loadData() {
+  const inp = document.createElement('input');
+  inp.type = 'file';
+  inp.accept = '.json';
+  inp.onchange = e => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      try {
+        extras = JSON.parse(ev.target.result);
+        saveExtras();
+        renderTable();
+        alert('داده‌ها بارگذاری شدند ✅');
+      } catch { alert('فایل نامعتبر است'); }
+    };
+    reader.readAsText(e.target.files[0]);
+  };
+  inp.click();
+}
+
+// KEYBOARD
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    closeModal();
+  }
+});
+
+// INIT
+renderStats();
+renderTable();
+</script>
+</body>
+</html>
